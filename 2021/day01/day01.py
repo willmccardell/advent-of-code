@@ -19,13 +19,9 @@ def process_measurements(measurements):
     #need to iterate through the list and get a count of number 
     #of entries that are larger than their previous one, keeping
     #in mind the off-by-one errors
-    ctr = -1
     increases = 0
-    for i in processed_data:
-        ctr = ctr + 1
-        if (ctr == 0):
-            continue
-        if(i > processed_data[ctr - 1]):
+    for i in range(1, len(processed_data), 1):
+        if processed_data[i] > processed_data[i-1]:
             increases = increases + 1
 
     return increases
