@@ -20,8 +20,10 @@ def process_measurements(measurements):
     #of entries that are larger than their previous one, keeping
     #in mind the off-by-one errors
     increases = 0
-    for i in range(1, len(processed_data), 1):
-        if processed_data[i] > processed_data[i-1]:
+    for i in range(3, len(processed_data), 1):
+        curr_3m_window = processed_data[i] + processed_data[i-1] + processed_data[i-2]
+        prev_3m_window = processed_data[i-1] + processed_data[i-2] + processed_data[i-3]
+        if curr_3m_window > prev_3m_window:
             increases = increases + 1
 
     return increases
