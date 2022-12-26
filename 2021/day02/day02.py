@@ -7,15 +7,18 @@ def main():
 def process_commands(commands):
     horiz_pos = 0
     depth = 0
+    aim = 0
 
     for (cmd, mag) in commands:
         match cmd:
             case 'forward':
                 horiz_pos = horiz_pos + mag
+                depth = depth + (aim * mag)
             case 'down': 
-                depth = depth + mag
+                aim = aim + mag
             case 'up':
-                depth = depth - mag
+                aim = aim - mag
+    print(f'{horiz_pos} at depth {depth}')
     total = horiz_pos * depth
     print(total)
 
