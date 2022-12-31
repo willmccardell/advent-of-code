@@ -11,13 +11,13 @@ class Board:
 
     def __str__(self):
         #print the board with row / col under it
-        retval = '\n'.join([" ".join( ["{:>2}".format(str(c)) for c in self.cells[i:i+self.colCount]]) for i in range(0,len(self.cells),self.colCount)])
+        # retval = '\n'.join([" ".join( ["{:>2}".format(str(c)) for c in self.cells[i:i+self.colCount]]) for i in range(0,len(self.cells),self.colCount)])
         
-        # retval = ''
-        # for i, a in enumerate(self.cells):
-        #     retval = retval + "{:>2}".format(a.value) + ' '
-        #     if i % self.colCount == self.colCount - 1:
-        #         retval = retval + '\n'
+        retval = ''
+        for i, a in enumerate(self.cells):
+            retval +=  "{:>2} ".format(a.value)
+            if i % self.colCount == self.colCount - 1:
+                retval = retval + '\n'
 
         retval = retval + f'\nBoard Columns: {self.colCount} Board Rows: {self.rowCount}'
         return retval
