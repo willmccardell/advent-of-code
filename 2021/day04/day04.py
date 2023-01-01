@@ -9,6 +9,9 @@ class Board:
         self.rowCount = 0
         self.colCount = 0
 
+    def check_if_winner(self):
+        return False
+
     def __str__(self):
         #print the board with row / col under it
         retval = '\n'.join([" ".join( [f'{str(c):>2}' for c in self.cells[i:i+self.colCount]]) for i in range(0,len(self.cells),self.colCount)])
@@ -35,12 +38,40 @@ class Cell:
 
 def main():
     prng, boards = read_input()
-    process_input(prng, boards)
+    process_bingo(prng, boards)
 
-def process_input(prng, boards):
+def process_bingo(prng, boards):
     print(prng)
     [print(b) for b in boards]
+
+    # for each number of prng
+    #   mark the spot if it exists in the board's cells
+    #   Check if the board has a win yet
+    #   Abort if a winner is selected
+    # score routine
+
+    has_winner = False
+    winning_board = None
     
+    for callout in prng:
+        for board in boards:
+            for cell in board.cells:
+                if cell.value == callout:
+                    cell.marked = True
+                    break
+            has_winner = board.check_if_winner()
+            if has_winner == True:
+                winning_board = board
+                break
+        if has_winner == True:
+            break
+    final_score = calculate_final_score(winning_board)
+    print(f'Your score: {final_score}')
+
+def calculate_final_score(board):
+    retVal = 0
+
+    return retVal
 
 def read_input():
     inputFile = "sample.txt"
