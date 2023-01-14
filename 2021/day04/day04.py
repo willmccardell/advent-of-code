@@ -32,6 +32,11 @@ class Board:
 
         return winner
 
+    def score_unmarked_cells(self):
+        score = 0
+        score = sum([int(c.value) for c in self.cells if c.marked == False])
+        return score
+
     def __str__(self):
         #print the board with row / col under it
         retval = '\n'.join([" ".join( [f'{str(c):>2}' for c in self.cells[i:i+self.colCount]]) for i in range(0,len(self.cells),self.colCount)])
@@ -72,6 +77,7 @@ def process_bingo(prng, boards):
 
     has_winner = False
     winning_board = None
+    winning_callout = 0
     
     for callout in prng.split(','):
         for board in boards:
@@ -82,19 +88,19 @@ def process_bingo(prng, boards):
             has_winner = board.check_if_winner()
             if has_winner == True:
                 winning_board = board
+                winning_callout = callout
                 break
         if has_winner == True:
             break
-    final_score = calculate_final_score(winning_board)
+    final_score = calculate_final_score(winning_board, winning_callout)
     if winning_board != None:
         print("Winning board found!")
         print(winning_board)
     print(f'Your score: {final_score}')
 
-def calculate_final_score(board):
-    retVal = 0
-
-    return retVal
+def calculate_final_score(board, callout):
+    final_score = board.score_unmarked_cells() * int(callout)
+    return final_score
 
 def read_input():
     inputFile = "sample.txt"
