@@ -1,3 +1,4 @@
+import copy
 
 class Board:
     cells = []
@@ -77,6 +78,8 @@ def process_bingo(prng, boards):
     has_winner = False
     winning_board = None
     winning_callout = 0
+    winning_list = []
+    gatekeeper_boards = []
     
     for callout in prng:
         for board in boards:
@@ -84,14 +87,16 @@ def process_bingo(prng, boards):
                 if cell.value == callout:
                     cell.marked = True
                     break
-            has_winner = board.check_if_winner()
-            if has_winner == True:
-                winning_board = board
-                winning_callout = callout
-                break
-        if has_winner == True:
-            break
-        
+            is_winner = board.check_if_winner()
+            if is_winner == True:
+                if board not in gatekeeper_boards:
+                    gatekeeper_boards.append(board)
+                    deep_board = copy.deepcopy(board)
+                    winning_list.append((deep_board, callout))
+                #break
+    
+    winning_board, winning_callout = winning_list[len(winning_list) - 1]
+
     
     if winning_board != None:
         print("Winning board found!")
