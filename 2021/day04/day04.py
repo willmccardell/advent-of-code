@@ -10,7 +10,27 @@ class Board:
         self.colCount = 0
 
     def check_if_winner(self):
-        return False
+        winner = False
+        for r in range(0,self.rowCount):
+            if winner == False:
+                rowWinner = True
+                for c in self.cells[r:r+self.colCount]:
+                    if c.marked == False:
+                        rowWinner = False
+                if rowWinner == True:
+                    winner = True
+        
+        if winner == False:
+            for col in range(0,self.colCount):
+                if winner == False:
+                    colWinner = True
+                    for row in range(0,self.rowCount):
+                        if self.cells[(row * self.colCount) + col].marked == False:
+                            colWinner = False
+                    if colWinner == True:
+                        winner = True
+
+        return winner
 
     def __str__(self):
         #print the board with row / col under it
@@ -53,7 +73,7 @@ def process_bingo(prng, boards):
     has_winner = False
     winning_board = None
     
-    for callout in prng:
+    for callout in prng.split(','):
         for board in boards:
             for cell in board.cells:
                 if cell.value == callout:
@@ -66,6 +86,9 @@ def process_bingo(prng, boards):
         if has_winner == True:
             break
     final_score = calculate_final_score(winning_board)
+    if winning_board != None:
+        print("Winning board found!")
+        print(winning_board)
     print(f'Your score: {final_score}')
 
 def calculate_final_score(board):
