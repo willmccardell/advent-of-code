@@ -65,7 +65,7 @@ def main():
     process_bingo(prng, boards)
 
 def process_bingo(prng, boards):
-    print(prng)
+    #print(prng)
     #[print(b) for b in boards]
 
     # for each number of prng
@@ -84,7 +84,6 @@ def process_bingo(prng, boards):
                 if cell.value == callout:
                     cell.marked = True
                     break
-            print(board)
             has_winner = board.check_if_winner()
             if has_winner == True:
                 winning_board = board
