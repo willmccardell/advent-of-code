@@ -29,6 +29,18 @@ class line:
     def is_straight(self):
         return self.start_point.x == self.end_point.x or self.start_point.y == self.end_point.y
 
+    def is_point_along(self,p):
+        return (p.x >= self.start_point.x and p.x <= self.end_point.x and \
+                p.y >= self.start_point.y and p.y <= self.end_point.y) or \
+                (p.x >= self.start_point.x and p.x <= self.end_point.x and \
+                p.y <= self.start_point.y and p.y >= self.end_point.y) or \
+                (p.x <= self.start_point.x and p.x >= self.end_point.x and \
+                p.y >= self.start_point.y and p.y <= self.end_point.y) or \
+                (p.x >= self.start_point.x and p.x <= self.end_point.x and \
+                p.y >= self.start_point.y and p.y <= self.end_point.y)     
+
+            
+
     def max_x_cardinality(self):
         return max(self.start_point.x, self.end_point.x)
     
@@ -58,9 +70,13 @@ class ventmap:
             for col in range(0,self.x_bounds + 1):
                 grid_spot_value = '.'
                 p = point(col,row)
+                grid_spot_count = 0
                 for line in self.lines:
-                    if line.is_straight() and (line.start_point == p or line.end_point == p):
-                        grid_spot_value = 'X'
+                    if line.is_straight():
+                        if line.is_point_along(p):
+                            grid_spot_count += 1
+                if grid_spot_count > 0:
+                    grid_spot_value = str(grid_spot_count)
                 final_grid += grid_spot_value
             final_grid += '\n'
         return final_grid
