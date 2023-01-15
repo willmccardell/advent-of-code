@@ -10,6 +10,9 @@ class point:
 
     def __str__(self):
         return f"({self.x},{self.y})"
+    
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
 
 
 class line:
@@ -23,6 +26,9 @@ class line:
     def __str__(self):
         return f'{self.start_point} -> {self.end_point}'
 
+    def is_straight(self):
+        return self.start_point.x == self.end_point.x or self.start_point.y == self.end_point.y
+
     def max_x_cardinality(self):
         return max(self.start_point.x, self.end_point.x)
     
@@ -33,7 +39,7 @@ class ventmap:
     lines = []
     x_bounds = None
     y_bounds = None
-    vmap = None
+    vent_map = None
 
     def __init__(self,lines):
         self.lines = lines
@@ -42,12 +48,22 @@ class ventmap:
         self.x_bounds = max([l.max_x_cardinality() for l in self.lines])
         self.y_bounds = max([l.max_y_cardinality() for l in self.lines])
         #prepopulate the vmap
-        self.vmap = [[0 for x in range(self.x_bounds)] for x in range(self.y_bounds)]
+        self.vent_map = [[0 for x in range(self.x_bounds)] for x in range(self.y_bounds)]
 
     def __str__(self):
-        #for row in self.vmap:
-          
-        return ''
+        final_grid = ''
+        for row in range(0,self.y_bounds + 1): 
+            #to start, check if the position has a line whose ENDPOINTS matches it.
+            #I'll then figure out real lines later
+            for col in range(0,self.x_bounds + 1):
+                grid_spot_value = '.'
+                p = point(col,row)
+                for line in self.lines:
+                    if line.is_straight() and (line.start_point == p or line.end_point == p):
+                        grid_spot_value = 'X'
+                final_grid += grid_spot_value
+            final_grid += '\n'
+        return final_grid
 
 def main():
     input = read_input()
