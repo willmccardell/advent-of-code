@@ -68,7 +68,6 @@ class line:
                 if self.is_point_along(dumb_point):
                     path_list.append(dumb_point)
 
-
         return path_list
 
     def path(self):
@@ -112,23 +111,14 @@ class ventmap:
                     final_grid += '.'
             final_grid += '\n'
         return final_grid
-
-    def dumb_map(self):
-        final_grid = ''
-        for row in range(0,self.y_bounds + 1): 
-            for col in range(0,self.x_bounds + 1):
-                grid_spot_value = '.'
-                p = point(col,row)
-                grid_spot_count = 0
-                for line in self.lines:
-                    if line.is_straight():
-                        if line.is_point_along(p):
-                            grid_spot_count += 1
-                if grid_spot_count > 0:
-                    grid_spot_value = str(grid_spot_count)
-                final_grid += grid_spot_value
-            final_grid += '\n'
-        return final_grid
+    
+    def score(self):
+        sum_val = 0
+        for row in range(0,self.y_bounds +1):
+            for col in range(0,self.x_bounds +1):
+                if self.vent_map[row][col] > 1:
+                    sum_val += 1
+        return sum_val
 
 def main():
     input = read_input()
@@ -141,6 +131,8 @@ def main():
     duration = end - start
     print(duration)
 
+    print(vents.score())
+
 # remove lines that aren't straight
 def purge_input(input):
     return list(filter(lambda x: x.is_straight(),input))
@@ -148,7 +140,7 @@ def purge_input(input):
 def read_input():
     line_list = []
     temp_values = []
-    inputFile = "sample.txt"
+    inputFile = "input.txt"
     
     with open(inputFile) as file:
         while (read_line := file.readline().rstrip()):
