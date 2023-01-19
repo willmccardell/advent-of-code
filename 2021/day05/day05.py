@@ -1,5 +1,6 @@
 from parse import *
 import time
+from itertools import chain
 
 class point:
     x = None
@@ -113,12 +114,8 @@ class ventmap:
         return final_grid
     
     def score(self):
-        sum_val = 0
-        for row in range(0,self.y_bounds +1):
-            for col in range(0,self.x_bounds +1):
-                if self.vent_map[row][col] > 1:
-                    sum_val += 1
-        return sum_val
+        count_val = sum(1 for col in chain.from_iterable(self.vent_map) if col > 1)
+        return count_val
 
 def main():
     input = read_input()
@@ -132,10 +129,6 @@ def main():
     print(duration)
 
     print(vents.score())
-
-# remove lines that aren't straight
-def purge_input(input):
-    return list(filter(lambda x: x.is_straight(),input))
 
 def read_input():
     line_list = []
