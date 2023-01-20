@@ -28,8 +28,12 @@ class line:
     def __str__(self):
         return f'{self.start_point} -> {self.end_point}'
 
-    def is_straight(self):
-        return self.start_point.x == self.end_point.x or self.start_point.y == self.end_point.y
+    def is_valid(self):
+        is_valid = self.start_point.x == self.end_point.x or self.start_point.y == self.end_point.y
+        #determine if line is 45 degree diagonal or not
+        #can be determined by |x1-x2| = |y1-y2|
+        is_valid |= (abs(self.start_point.x - self.end_point.x) == abs(self.start_point.y - self.end_point.y))
+        return is_valid
 
     def is_point_along(self,p):
         return (p.x >= self.start_point.x and p.x <= self.end_point.x and \
@@ -96,7 +100,7 @@ class ventmap:
         self.vent_map = [[0 for x in range(self.x_bounds + 1)] for x in range(self.y_bounds + 1)]
 
         for line in self.lines:
-            if line.is_straight():
+            if line.is_valid():
                 mark_grid_list =  line.dumbly_find_path()
                 for spot in mark_grid_list:
                     self.vent_map[spot.y][spot.x] += 1
@@ -116,6 +120,9 @@ class ventmap:
     def score(self):
         count_val = sum(1 for col in chain.from_iterable(self.vent_map) if col > 1)
         return count_val
+
+#can I do the path calculation as part of creating the line? so on creation it will
+#append all points along the path?
 
 def main():
     input = read_input()
