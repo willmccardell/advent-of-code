@@ -28,61 +28,33 @@ class line:
     def __str__(self):
         return f'{self.start_point} -> {self.end_point}'
 
-    def is_valid(self):
-        is_valid = self.start_point.x == self.end_point.x or self.start_point.y == self.end_point.y
-        #determine if line is 45 degree diagonal or not
-        #can be determined by |x1-x2| = |y1-y2|
-        is_valid |= (abs(self.start_point.x - self.end_point.x) == abs(self.start_point.y - self.end_point.y))
-        return is_valid
-
-    def is_point_along(self,p):
-        return (p.x >= self.start_point.x and p.x <= self.end_point.x and \
-                p.y >= self.start_point.y and p.y <= self.end_point.y) or \
-                (p.x >= self.start_point.x and p.x <= self.end_point.x and \
-                p.y <= self.start_point.y and p.y >= self.end_point.y) or \
-                (p.x <= self.start_point.x and p.x >= self.end_point.x and \
-                p.y >= self.start_point.y and p.y <= self.end_point.y) or \
-                (p.x >= self.start_point.x and p.x <= self.end_point.x and \
-                p.y >= self.start_point.y and p.y <= self.end_point.y)     
-
-    def dumbly_find_path(self):
-        path_list = []
-        path_list.append(self.start_point)
-        path_list.append(self.end_point)
-        direction_x = self.end_point.x - self.start_point.x 
-        direction_y = self.end_point.y - self.start_point.y
-
-        impulse_x = 1
-        impulse_y = 1
-
-        if direction_x < 0:
-            impulse_x = -1
-
-        if direction_y < 0:
-            impulse_y = -1
-
-        for dx in range(0,direction_x, impulse_x ):
-            dumb_point = point(self.start_point.x + dx, self.start_point.y)
-            if dumb_point != self.start_point:
-                if self.is_point_along(dumb_point):
-                    path_list.append(dumb_point)
-
-        for dy in range(0,direction_y, impulse_y):
-            dumb_point = point(self.start_point.x, self.start_point.y + dy)
-            if dumb_point != self.start_point:
-                if self.is_point_along(dumb_point):
-                    path_list.append(dumb_point)
-
-        return path_list
-
-    def path(self):
-        return [point(0,0)]
-
     def max_x_cardinality(self):
         return max(self.start_point.x, self.end_point.x)
-    
+
     def max_y_cardinality(self):
         return max(self.start_point.y, self.end_point.y)
+
+    #https://github.com/ebouteillon/advent-of-code-2021/blob/main/day-05/part2.py
+    def find_path(self):
+        points = []
+        p1 = self.start_point
+        p2 = self.end_point
+
+        #assuming all data is either a straight line or a 45 degree angle
+        if p1.x == p2.x or p1.y == p2.y:
+            #reorder them to always go in the same direction
+            x1, y1, x2, y2 = min(p1.x,p2.x), min(p1.y,p2.y), max(p1.x,p2.x), max(p1.y,p2.y)
+            for y in range(y1,y2+1):
+                for x in range(x1,x2+1):
+                    points.append(point(x,y))
+        else:
+            # orient the direction of the line and get all
+            # entries along the two points    
+            x = range(p1.x, p2.x +1) if p1.x <= p2.x else range(p1.x, p2.x -1, -1)
+            y = range(p1.y, p2.y +1) if p1.y <= p2.y else range(p1.y, p2.y -1, -1)
+            for i,j in zip(x,y):
+                points.append(point(i,j))
+        return points
 
 class ventmap:
     lines = []
@@ -100,10 +72,9 @@ class ventmap:
         self.vent_map = [[0 for x in range(self.x_bounds + 1)] for x in range(self.y_bounds + 1)]
 
         for line in self.lines:
-            if line.is_valid():
-                mark_grid_list =  line.dumbly_find_path()
-                for spot in mark_grid_list:
-                    self.vent_map[spot.y][spot.x] += 1
+            mark_grid_list =  line.find_path()
+            for spot in mark_grid_list:
+                self.vent_map[spot.y][spot.x] += 1
 
     def __str__(self):
         final_grid = ''
@@ -120,9 +91,6 @@ class ventmap:
     def score(self):
         count_val = sum(1 for col in chain.from_iterable(self.vent_map) if col > 1)
         return count_val
-
-#can I do the path calculation as part of creating the line? so on creation it will
-#append all points along the path?
 
 def main():
     input = read_input()
