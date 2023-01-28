@@ -1,19 +1,24 @@
 import copy
 import re
 import cProfile
+import numpy as np
 
 
-testcase = 1
-output_info = 1
-
+testcase = 0
+output_info = 0
+day2 = True
 
 def main():
     fish = read_input()
-    test_value = read_test_case()
-    fish_chart, textual_fish = fish_reproduction(fish)
-    if testcase and output_info:
-        run_test(test_value, textual_fish)
-    process_fish(fish_chart)
+    
+    if day2:
+        fish_reproduction_quick(fish)
+    else:
+        test_value = read_test_case()
+        fish_chart, textual_fish = fish_reproduction_simulation(fish)
+        if testcase and output_info:
+            run_test(test_value, textual_fish)
+        process_fish(fish_chart)
     
 
 def process_fish(fishes):
@@ -25,7 +30,40 @@ def run_test(test_value, fish_chart):
     else:
         print("Test succeeds!")
 
-def fish_reproduction(input):
+#adapted from https://github.com/interannette/advent-of-code/blob/master/2021/day06/day06.go
+def fish_reproduction_quick(input):
+    days = 256
+    fishes = input
+
+    #populate the dictionary with keys for all possible keys
+    fishcount = dict.fromkeys(range(0,9),0)
+    #count how many fish there are at each stage of lifecycle
+    for _, fish in enumerate(fishes):
+        fishcount[fish] = fishcount[fish] + 1
+    
+    for day in range(0, days):
+        newFishCount = dict.fromkeys(range(0,9),0)
+        #for each day, shift each entry of fish down 1. if at 0, shift them into slot 8 to handle birthing
+        for i in range(0,9):
+            numberAtDay = fishcount[i]
+            newDay, spawn = fishgrowth(i)
+            newFishCount[newDay] = newFishCount[newDay] + numberAtDay
+            if spawn:
+                newFishCount[8] = newFishCount[8] + numberAtDay
+        fishcount = newFishCount
+
+    print(sum(fishcount.values()))
+
+def fishgrowth(fish):
+    spawn = False
+    if fish == 0:
+        fish = 6
+        spawn = True
+    else:
+        fish = fish - 1
+    return fish, spawn
+
+def fish_reproduction_simulation(input):
     fishes = input
     birth_cycle = 6
     first_cycle = 2
