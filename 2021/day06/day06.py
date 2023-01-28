@@ -1,10 +1,13 @@
 import copy
 
+testcase = 0
+
 def main():
     fish = read_input()
     test_value = read_test_case()
     fish_chart, textual_fish = fish_reproduction(fish)
-    #run_test(test_value, textual_fish)
+    if testcase == 1:
+        run_test(test_value, textual_fish)
     process_fish(fish_chart)
     
 
@@ -21,7 +24,10 @@ def fish_reproduction(input):
     fishes = input
     birth_cycle = 6
     first_cycle = 2
-    days = 80
+    if testcase == 1:
+        days = 18
+    else:
+        days = 80
     output_for_test = ""
     out_str = f'Initial state: {",".join([str(i) for i in fishes])}'
     #print(out_str)
@@ -53,7 +59,10 @@ def read_test_case():
     return test_value
 
 def read_input():
-    input_file = 'input.txt'
+    if testcase == 1:
+        input_file = "sample.txt"
+    else:
+        input_file = 'input.txt'
     fish = []
     
     with open(input_file) as file:
