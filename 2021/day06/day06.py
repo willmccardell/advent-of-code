@@ -1,12 +1,17 @@
 import copy
+import re
+import cProfile
 
-testcase = 0
+
+testcase = 1
+output_info = 1
+
 
 def main():
     fish = read_input()
     test_value = read_test_case()
     fish_chart, textual_fish = fish_reproduction(fish)
-    if testcase == 1:
+    if testcase and output_info:
         run_test(test_value, textual_fish)
     process_fish(fish_chart)
     
@@ -29,32 +34,31 @@ def fish_reproduction(input):
     else:
         days = 80
     output_for_test = ""
-    out_str = f'Initial state: {",".join([str(i) for i in fishes])}'
-    #print(out_str)
-    output_for_test += out_str
-    for day in range(1,days + 1):
-        new_fish = []
-        current_fish = copy.deepcopy(fishes)
-        for fish in range(0,len(fishes)):
-            if current_fish[fish] == 0:
-                current_fish[fish] = birth_cycle
-                new_fish.append(birth_cycle + first_cycle)
+    if output_info:
+        out_str = f'Initial state: {",".join([str(i) for i in fishes])}'
+        output_for_test += out_str + '\n'
+
+    for day in range(1,days+1):
+        new_fish = [birth_cycle + first_cycle for fish, age in enumerate(fishes) if age == 0]
+        for i, age in enumerate(fishes):
+            if age > 0:
+                fishes[i] -= 1
             else:
-                current_fish[fish] = current_fish[fish] - 1
-        fishes = copy.deepcopy(current_fish)   
-         
-        if len(new_fish) > 0:
-            fishes.extend(new_fish)
-        out_str = f'After {str(day):>2} day{"s:" if day > 1 else ": "} {",".join([str(i) for i in fishes])}'
-        output_for_test += out_str
-        #print(out_str)
+                fishes[i] = birth_cycle
+        fishes += new_fish
+        if output_info:
+            out_str = f'After {str(day):>2} day{"s:" if day > 1 else ": "} {",".join([str(i) for i in fishes])}'
+            output_for_test += out_str + '\n'
+    if output_info:
+        output_for_test = output_for_test.rstrip()
+        print(output_for_test)
     return fishes, output_for_test
 
 def read_test_case():
     input_file = 'testcase.txt'
     test_value = ""
     with open(input_file) as file:
-        while (read_line := file.readline().rstrip()):
+        while (read_line := file.readline()):
             test_value += read_line 
     return test_value
 
@@ -72,3 +76,4 @@ def read_input():
 
 if __name__ == '__main__':
     main()
+    #cProfile.run('main()')
