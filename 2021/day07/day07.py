@@ -7,41 +7,21 @@ realdeal = False
 def find_least_costly_position(crabmarines):
     highest_position = max(crabmarines)
     crabs = np.array(crabmarines)
-    fuel_cost = crabs
-    lowest_fuel = None
-    converge_spot = -1
-    #Meatbag's version
-    # for dest in range(0,highest_position + 1):
-    #     fuel_cost = abs(crabs - dest)
-    #     total_fuel = sum(fuel_cost)
-    #     if lowest_fuel == None:
-    #         lowest_fuel = total_fuel
-    #     if total_fuel < lowest_fuel:
-    #         lowest_fuel = total_fuel
-    #         converge_spot = dest
 
-    #AI's for-loop version
-    # fuel_cost = []
-    # for dest in range(highest_position + 1):
-    #     dest_cost = []
-    #     for crab in crabs:
-    #         dest_cost.append(abs(crab - dest))
-    #     fuel_cost.append(dest_cost)
-
-    # total_fuel = [sum(x) for x in fuel_cost]
-    # lowest_fuel = min(total_fuel)
-    # converge_spot = total_fuel.index(lowest_fuel)
-
-    #AI's numpy version
+    #ChatGPT generated
+    #Creates an array that contains the position and (original) cost to get there
     fuel_cost = np.abs(crabs[:,np.newaxis] - np.arange(highest_position+1))
+    #uses triangle numbers to get the full cost given the new constraints
+    fuel_cost = fuel_cost*(fuel_cost+1)//2
+    #sums all the fuel costs and puts it into an array
     total_fuel = np.sum(fuel_cost, axis=0)
+
     lowest_fuel = np.min(total_fuel)
+    
+    #finds the spot that the crabs are converging on
     converge_spot = np.argmin(total_fuel)
 
     print(f'Converging on Spot {converge_spot} costs {lowest_fuel}')
-
-def calc_fuel(pos,dest):
-    return pos - dest
 
 def main():
     input = read_input()
